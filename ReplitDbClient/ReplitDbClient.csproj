@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageVersion>0.0.1-beta1</PackageVersion>
+        <Authors>Free-Side Software</Authors>
+        <Description>A simple client library for using ReplitDB from .Net</Description>
+        <Copyright>2022 Free-Side Software</Copyright>
+        <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+        <LangVersion>8</LangVersion>
+    </PropertyGroup>
+
+</Project>

@@ -1,0 +1,5 @@
+## Ignore dotnet build results
+#
+# Build results
+[Bb]in/
+[Oo]bj/
