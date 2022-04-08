@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace ReplitDbClient {
     public static class ReplitDbClientExtensions {
-        public static Task<IEnumerable<String>> GetAll(this IReplitDbClient client) {
-            return Task.FromResult<IEnumerable<String>>(new DbValueEnumerable(client));
+        public static Task<IEnumerable<KeyValuePair<String, String>>> GetAll(this IReplitDbClient client) {
+            return Task.FromResult<IEnumerable<KeyValuePair<String, String>>>(new DbValueEnumerable(client));
         }
 
         public static async Task DeleteMultiple(this IReplitDbClient client, params String[] keys) {
@@ -21,14 +21,14 @@ namespace ReplitDbClient {
             }
         }
 
-        private class DbValueEnumerable : IEnumerable<String> {
+        private class DbValueEnumerable : IEnumerable<KeyValuePair<String, String>> {
             private readonly IReplitDbClient client;
 
             public DbValueEnumerable(IReplitDbClient client) {
                 this.client = client;
             }
 
-            public IEnumerator<String> GetEnumerator() {
+            public IEnumerator<KeyValuePair<String, String>> GetEnumerator() {
                 var keyEnumerator =
                     this.client.ListKeys().ConfigureAwait(false).GetAwaiter().GetResult().GetEnumerator();
 
@@ -39,11 +39,11 @@ namespace ReplitDbClient {
                 return this.GetEnumerator();
             }
 
-            private class DbValueEnumerator : IEnumerator<String> {
+            private class DbValueEnumerator : IEnumerator<KeyValuePair<String, String>> {
                 private readonly IReplitDbClient client;
                 private IEnumerator<String> keyEnumerator;
 
-                public String Current { get; private set; }
+                public KeyValuePair<String, String> Current { get; private set; }
 
                 Object IEnumerator.Current => this.Current;
 
@@ -56,10 +56,13 @@ namespace ReplitDbClient {
                     if (this.keyEnumerator != null) {
                         if (this.keyEnumerator.MoveNext()) {
                             this.Current =
-                                this.client.Get(this.keyEnumerator.Current)
-                                    .ConfigureAwait(false)
-                                    .GetAwaiter()
-                                    .GetResult();
+                                new KeyValuePair<String, String>(
+                                    this.keyEnumerator.Current,
+                                    this.client.Get(this.keyEnumerator.Current)
+                                        .ConfigureAwait(false)
+                                        .GetAwaiter()
+                                        .GetResult()
+                                );
 
                             return true;
                         } else {

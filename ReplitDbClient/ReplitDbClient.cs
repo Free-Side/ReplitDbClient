@@ -44,7 +44,7 @@ namespace ReplitDbClient {
             using var response =
                 await this.http.DeleteAsync(this.GetRequestUri(key)).ConfigureAwait(false);
 
-            CheckResponse(response);
+            CheckResponse(response, expectNoContent: true);
         }
 
         public Task<IEnumerable<String>> ListKeys(String prefix = "") {
@@ -59,11 +59,15 @@ namespace ReplitDbClient {
             return $"{this.url}/{Uri.EscapeDataString(key)}";
         }
 
-        private static void CheckResponse(HttpResponseMessage response) {
+        private static void CheckResponse(
+            HttpResponseMessage response,
+            Boolean expectNoContent = false) {
+
             switch (response.StatusCode) {
                 case HttpStatusCode.Accepted:
                 case HttpStatusCode.Created:
                 case HttpStatusCode.OK:
+                case HttpStatusCode.NoContent when expectNoContent:
                     // Success
                     return;
                 case HttpStatusCode.Forbidden:
